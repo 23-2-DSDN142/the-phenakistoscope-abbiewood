@@ -2,14 +2,13 @@ const SLICE_COUNT = 10;
 
 
 function setup_pScope(pScope) {
-  pScope.output_mode(OUTPUT_GIF(1000));
+  pScope.output_mode(ANIMATED_DISK);
+  // pScope.output_mode(OUTPUT_GIF(1000));
   pScope.scale_for_screen(true);
   pScope.draw_layer_boundaries(false);
   pScope.set_direction(CCW);
   pScope.set_slice_count(SLICE_COUNT);
-
   pScope.load_image("monstera", "png");
-  pScope.load_image("zebrina", "png");
   pScope.load_image_sequence("watering", "png", 10)
   pScope.load_image("monsteraCentre", "png");
 
@@ -17,31 +16,19 @@ function setup_pScope(pScope) {
 
 function setup_layers(pScope) {
 
-  new PLayer(null, "#ffdee2"); //lets us draw the whole circle background, ignoring the boundaries
+  new PLayer(null, "#FDBCB2"); //lets us draw the whole circle background, ignoring the boundaries
 
   let plantPot = new PLayer(pot);
   plantPot.mode(RING);
-  plantPot.set_boundary(0, 400);
-
-  // let zebrinaPlant = new PLayer(zebrina);
-  // zebrinaPlant.mode (SWIRL (1))
-  // zebrinaPlant.set_boundary (200, 700);
+  plantPot.set_boundary(0, 350);
 
   let can = new PLayer(watering)
   can.mode(RING)
   can.set_boundary(1000, 1000)
 
-  // let layer5 = new PLayer (water)
-  // layer5.mode (SWIRL(1))
-  // layer5.set_boundary (900,1000)
-
   let outerRing = new PLayer(outsideRing)
   outerRing.mode(RING)
   outerRing.set_boundary(980, 1000)
-
-  let outerPot = new PLayer(outerPotRing)
-  outerPot.mode
-  outerPot.set_boundary(500, 300)
 
   let monsteraMiddle = new PLayer(monsteraCentre)
   monsteraMiddle.mode(RING)
@@ -49,24 +36,15 @@ function setup_layers(pScope) {
 
   let monsteraPlant = new PLayer(monstera);
   monsteraPlant.mode(RING);
-  monsteraPlant.set_boundary(200, 700);
+  monsteraPlant.set_boundary(0, 300);
 
-
-  let backgroundDetail = new PLayer(bubbles);
-  backgroundDetail.mode(RING);
-  backgroundDetail.set_boundary(500, 600);
+  let water = new PLayer(waterdrops);
+  water.mode(RING);
+  water.set_boundary(500, 600);
 
   let flowerLayer = new PLayer(addingFlowers)
   flowerLayer.mode(RING);
   flowerLayer.set_boundary(0, 400)
-
-
-}
-
-function outerPotRing(x, y, animation, pScope) {
-  scale(0.5)
-  pScope.fill_background("#3b2219")
-
 }
 
 function outsideRing(x, y, animation, pScope) {
@@ -75,111 +53,97 @@ function outsideRing(x, y, animation, pScope) {
 }
 
 function monstera(x, y, animation, pScope) {
-  scale(0.5);
-  pScope.draw_image("monstera", x, -800 + animation.wave() * 100);
-
+  scale(0.9);
+  pScope.draw_image("monstera", x, -500 + animation.wave() * 100);
 }
 
 function pot(x, y, animation, pScope) {
 
-  // this is how you set up a background for a specific layer
   let angleOffset = (360 / SLICE_COUNT) / 2
   let backgroundArcStart = 270 - angleOffset;
   let backgroundArcEnd = 270 + angleOffset;
 
   fill("#853225")
-  arc(x, y, 600, 600, backgroundArcStart, backgroundArcEnd); // draws "pizza slice" in the background
+  arc(x, y, 800, 800, backgroundArcStart, backgroundArcEnd);
 }
 
-function zebrina(x, y, animation, pScope) {
-
-  scale(1)
-  pScope.draw_image("zebrina", x, y);
-
-}
-
+//watering can sequence
 function watering(x, y, animation, pScope) {
   scale(0.8);
-  pScope.draw_image_from_sequence("watering", 0, -980, animation.frame);
+  pScope.draw_image_from_sequence("watering", 0, -980, animation.wave());
 
 }
-
-function water(x, y, animation, pScope) {
-
-  fill(255)
-  circle(0, 300, 80);
-
-}
-
+//centre element with monsteras and soil background
 function monsteraCentre(x, y, animation, pScope) {
   scale(1);
   pScope.draw_image("monsteraCentre", 0, 0);
 
-
-
 }
-
-function bubbles(x, y, animation, pScope) {
-  let mvmnt = 120 * animation.frame;
-  let bubbleSize = 20;
+//water droplets coming out of watering can
+function waterdrops(x, y, animation, pScope) {
+  let mvmnt = 130 * animation.frame;
+  let dropletSize = 25;
 
   noStroke();
   fill("#d1f7ff");
-
-
   push()
   rotate(13)
-  ellipse(x, -600 + mvmnt, bubbleSize, bubbleSize);
-  ellipse(x, -800 + mvmnt, bubbleSize, bubbleSize);
-  ellipse(x, -700 + mvmnt, bubbleSize, bubbleSize);
+  ellipse(x, -600 + mvmnt, dropletSize, dropletSize);
+  ellipse(x, -700 + mvmnt, dropletSize, dropletSize);
+  ellipse(x, -500 + mvmnt, dropletSize, dropletSize);
+  ellipse(x, -400 + mvmnt, dropletSize, dropletSize);
   pop()
 
 }
 
-function addingFlowers(x, y, animation, pScope) {
-  scale (1.5 + animation.wave () * 1)
-  drawFlower(0, -400 + animation.wave(1) * 100)
 
+function addingFlowers(x, y, animation, pScope) {
+  scale(1 + animation.wave() * 0.5)
+  drawFlower(2, -400 + animation.wave(1) * 100)
+
+  if (animation.frame == 0) {
+    scale(3)
+    drawFlower(x - 50, y - 50);
+  }
 
 }
-
 
 function drawFlower(x, y) {
 
   //parameters for flower
   //centre
-  let centreX = x+50 // flower centre
-  let centreY = y+50
+  let centreX = x + 50 // flower centre
+  let centreY = y + 50
   let centreSize = 30
-  let centreColour = "#fff3d4"
+  let centreColour = "#FDBCB2"
 
 
   //centre circle details
-  let detailX = x+53
-  let detailY = y+40
+  let detailX = x + 53
+  let detailY = y + 40
   let circleSize = 8 //small circles around perimeter of centre
   let circleDetailColour = "#DB652D"
 
 
   //main petals
   let petalSize = 35
-  let mainpetalX = x+50
-  let mainpetalY = y+50
+  let mainpetalX = x + 50
+  let mainpetalY = y + 50
   let mainPetalColour = "#CCDCD0"
 
 
   //outline around main petals
   let outlineSize = 40
-  let outlineX = x+50
-  let outlineY = y+50
+  let outlineX = x + 50
+  let outlineY = y + 50
   let outlineColour = "#821931"
 
 
   //outside extra petals
   let outsidePetalSize = 32
-  let petalX = x+32
-  let petalY = y+68
-  let outsidePetalColour = "#F0A9A2"
+  let petalX = x + 32
+  let petalY = y + 68
+  let outsidePetalColour = "#fff3d4"
 
   strokeWeight(0.5); //line weight
   stroke(outlineColour); // colour of the line
@@ -191,7 +155,6 @@ function drawFlower(x, y) {
   circle(petalX + 37, petalY, outsidePetalSize) // bottom right
   circle(petalX, petalY + 1, outsidePetalSize) // bottom left
   circle(petalX + 37, petalY - 38, outsidePetalSize); //top right
-
 
   //petal outline
   fill(255)
@@ -206,11 +169,6 @@ function drawFlower(x, y) {
   circle(mainpetalX - 20, mainpetalY, petalSize) //left petal
   circle(mainpetalX + 20, mainpetalY, petalSize) //right petal
   circle(mainpetalX, mainpetalY + 20, petalSize); //bottom petal
-
-  //line details on petals
-  line(13, 50, 87, 50)
-  line(50, 87, 50, 13);
-
 
   //centre
   fill(centreColour); //yellow colour
