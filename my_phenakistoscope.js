@@ -3,7 +3,6 @@ const SLICE_COUNT = 10;
 
 function setup_pScope(pScope) {
   pScope.output_mode(ANIMATED_DISK);
-  // pScope.output_mode(OUTPUT_GIF(1000));
   pScope.scale_for_screen(true);
   pScope.draw_layer_boundaries(false);
   pScope.set_direction(CCW);
@@ -16,7 +15,8 @@ function setup_pScope(pScope) {
 
 function setup_layers(pScope) {
 
-  new PLayer(null, "#FDBCB2"); //lets us draw the whole circle background, ignoring the boundaries
+  //background colour function with no boundaries.
+  new PLayer(null, "#FDBCB2");
 
   let plantPot = new PLayer(pot);
   plantPot.mode(RING);
@@ -46,17 +46,17 @@ function setup_layers(pScope) {
   flowerLayer.mode(RING);
   flowerLayer.set_boundary(0, 400)
 }
-
+//dark maroon tone around the edge of the circle
 function outsideRing(x, y, animation, pScope) {
   pScope.fill_background("#820e3f")
 
 }
-
+//monstera around the edge of the pot
 function monstera(x, y, animation, pScope) {
   scale(0.9);
   pScope.draw_image("monstera", x, -500 + animation.wave() * 100);
 }
-
+//draws the outside ring of the pot
 function pot(x, y, animation, pScope) {
 
   let angleOffset = (360 / SLICE_COUNT) / 2
@@ -85,7 +85,7 @@ function waterdrops(x, y, animation, pScope) {
   let dropletSize = 25;
 
   noStroke();
-  fill("#d1f7ff");
+  fill("CCDCD0");
   push()
   rotate(13)
   ellipse(x, -600 + mvmnt, dropletSize, dropletSize);
@@ -96,21 +96,21 @@ function waterdrops(x, y, animation, pScope) {
 
 }
 
-
+//flower ring
 function addingFlowers(x, y, animation, pScope) {
   scale(1 + animation.wave() * 0.5)
   drawFlower(2, -400 + animation.wave(1) * 100)
 
+//centre flower
   if (animation.frame == 0) {
     scale(3)
     drawFlower(x - 50, y - 50);
   }
 
 }
-
+//parameters for flowers and code
 function drawFlower(x, y) {
 
-  //parameters for flower
   //centre
   let centreX = x + 50 // flower centre
   let centreY = y + 50
